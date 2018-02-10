@@ -1,17 +1,18 @@
 import { app, BrowserWindow, screen } from 'electron';
 import * as path from 'path';
+import * as url from 'url';
 
-let win, serve;
+let win: Electron.BrowserWindow;
+let serve: boolean;
 const args = process.argv.slice(1);
 serve = args.some(val => val === '--serve');
-import * as url from 'url';
 
 if (serve) {
   require('electron-reload')(__dirname, {
   });
 }
 
-function createWindow() {
+function createWindow(): void {
 
   const electronScreen = screen;
   const size = electronScreen.getPrimaryDisplay().workAreaSize;
@@ -28,7 +29,7 @@ function createWindow() {
   win.loadURL(url.format({
     protocol: 'file:',
     pathname: path.join(__dirname, '/index.html'),
-    slashes:  true
+    slashes: true
   }));
 
   // Open the DevTools.
@@ -46,7 +47,6 @@ function createWindow() {
 }
 
 try {
-
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
