@@ -5,6 +5,8 @@ import * as url from 'url';
 let win: Electron.BrowserWindow;
 let serve: boolean;
 const args = process.argv.slice(1);
+const { ipcMain } = require('electron');
+
 serve = args.some(val => val === '--serve');
 
 if (serve) {
@@ -47,6 +49,11 @@ function createWindow(): void {
 }
 
 try {
+  ipcMain.on('ping', (event, arg) => {
+    console.log(arg)  // prints "ping"
+    event.returnValue = 'pong'
+  })
+
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.

@@ -36,7 +36,8 @@
     "pree2e": "webdriver-manager update --standalone false --gecko false --quiet && npm run build",
     "e2e": "protractor ./protractor.conf.js"
   },
-  "dependencies": {},
+  "dependencies": {
+  },
   "devDependencies": {
     "@angular/common": "5.2.0",
     "@angular/compiler": "5.2.0",
@@ -88,6 +89,7 @@
     "less-loader": "4.0.5",
     "minimist": "1.2.0",
     "mkdirp": "0.5.1",
+    "ngx-electron": "^1.0.4",
     "npm-run-all": "4.1.1",
     "npx": "9.7.1",
     "postcss-loader": "2.0.6",

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ElectronService } from 'ngx-electron';
 
 @Component({
   selector: 'app-home',
@@ -7,9 +8,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private electronService: ElectronService) {
+  }
 
   ngOnInit() {
   }
 
+  testMethod(): void {
+
+    let pong: string = this.electronService.ipcRenderer.sendSync('ping', 'ping');
+    console.log(pong);
+  }
 }

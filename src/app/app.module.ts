@@ -13,7 +13,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
-import { ElectronService } from './providers/electron.service';
+import { NgxElectronModule } from 'ngx-electron';
 
 import { WebviewDirective } from 'app/directives/webview.directive';
 
@@ -36,6 +36,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     FormsModule,
     HttpClientModule,
     AppRoutingModule,
+    NgxElectronModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -44,7 +45,6 @@ export function HttpLoaderFactory(http: HttpClient) {
       }
     })
   ],
-  providers: [ElectronService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
