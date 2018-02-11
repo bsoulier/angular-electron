@@ -9,8 +9,8 @@ const autoprefixer = require('autoprefixer');
 const postcssUrl = require('postcss-url');
 const customProperties = require('postcss-custom-properties');
 
-const { NoEmitOnErrorsPlugin, SourceMapDevToolPlugin, DefinePlugin, NamedModulesPlugin } = require('webpack');
-const { BaseHrefWebpackPlugin, NamedLazyChunksWebpackPlugin, InsertConcatAssetsWebpackPlugin } = require('@angular/cli/plugins/webpack');
+const { NoEmitOnErrorsPlugin, SourceMapDevToolPlugin, DefinePlugin, NamedModulesPlugin, } = require('webpack');
+const { BaseHrefWebpackPlugin, NamedLazyChunksWebpackPlugin, ScriptsWebpackPlugin } = require('@angular/cli/plugins/webpack');
 const { CommonsChunkPlugin } = require('webpack').optimize;
 const { AngularCompilerPlugin } = require('@ngtools/webpack');
 const ConcatPlugin = require('webpack-concat-plugin');
@@ -27,35 +27,35 @@ const postcssPlugins = function () {
   // safe settings based on: https://github.com/ben-eb/cssnano/issues/358#issuecomment-283696193
   const importantCommentRe = /@preserve|@license|[@#]\s*source(?:Mapping)?URL|^!/i;
   const minimizeOptions = {
-      autoprefixer: false,
-      safe: true,
-      mergeLonghand: false,
-      discardComments: { remove: (comment) => !importantCommentRe.test(comment) }
+    autoprefixer: false,
+    safe: true,
+    mergeLonghand: false,
+    discardComments: { remove: (comment) => !importantCommentRe.test(comment) }
   };
   return [
-      postcssUrl({
-          url: (obj) => {
-            if (!obj.url.startsWith('/') || obj.url.startsWith('//')) {
-              return obj.url;
-            }
-            if (deployUrl.match(/:\/\//)) {
-              // If deployUrl contains a scheme, ignore baseHref use deployUrl as is.
-              return `${deployUrl.replace(/\/$/, '')}${obj.url}`;
-            }
-            else if (baseHref.match(/:\/\//)) {
-              // If baseHref contains a scheme, include it as is.
-              return baseHref.replace(/\/$/, '') +
-                `/${deployUrl}/${obj.url}`.replace(/\/\/+/g, '/');
-            }
-            else {
-              // Join together base-href, deploy-url and the original URL.
-              // Also dedupe multiple slashes into single ones.
-              return `/${baseHref}/${deployUrl}/${obj.url}`.replace(/\/\/+/g, '/');
-            }
-          }
-      }),
-      autoprefixer(),
-      customProperties({ preserve: true })
+    postcssUrl({
+      url: (obj) => {
+        if (!obj.url.startsWith('/') || obj.url.startsWith('//')) {
+          return obj.url;
+        }
+        if (deployUrl.match(/:\/\//)) {
+          // If deployUrl contains a scheme, ignore baseHref use deployUrl as is.
+          return `${deployUrl.replace(/\/$/, '')}${obj.url}`;
+        }
+        else if (baseHref.match(/:\/\//)) {
+          // If baseHref contains a scheme, include it as is.
+          return baseHref.replace(/\/$/, '') +
+            `/${deployUrl}/${obj.url}`.replace(/\/\/+/g, '/');
+        }
+        else {
+          // Join together base-href, deploy-url and the original URL.
+          // Also dedupe multiple slashes into single ones.
+          return `/${baseHref}/${deployUrl}/${obj.url}`.replace(/\/\/+/g, '/');
+        }
+      }
+    }),
+    autoprefixer(),
+    customProperties({ preserve: true })
   ].concat(minimizeCss ? [cssnano(minimizeOptions)] : []);
 };
 
@@ -76,6 +76,15 @@ const styles = [
 
 //we add all our external scripts we want to load externally, like inserting in our index.html --> like as if it's .angular-cli.json
 const scripts = [
+  "./node_modules/pace-js/pace.min.js",
+  "./node_modules/tinymce/tinymce.min.js",
+  "./node_modules/tinymce/themes/modern/theme.min.js",
+  "./node_modules/tinymce/plugins/link/plugin.min.js",
+  "./node_modules/tinymce/plugins/paste/plugin.min.js",
+  "./node_modules/tinymce/plugins/table/plugin.min.js",
+  "./src/assets/vendors/echarts.min.js",
+  "./src/assets/vendors/echarts.world.min.js",
+  "./node_modules/chart.js/dist/Chart.min.js"
 ];
 
 //create file path for each , so we use for our excludes and includes where needed
@@ -101,9 +110,6 @@ function getPlugins() {
       "fileName": "[name].bundle.js",
       "filesToConcat": scripts
     }));
-    plugins.push(new InsertConcatAssetsWebpackPlugin([
-      "scripts"
-    ]));
   }
 
   plugins.push(new CopyWebpackPlugin([
@@ -124,11 +130,11 @@ function getPlugins() {
       }
     }
   ], {
-    "ignore": [
-      ".gitkeep"
-    ],
-    "debug": "warning"
-  }));
+      "ignore": [
+        ".gitkeep"
+      ],
+      "debug": "warning"
+    }));
 
   plugins.push(new ProgressPlugin());
 
@@ -182,11 +188,11 @@ function getPlugins() {
       "vendor"
     ],
     "minChunks": (module) => {
-              return module.resource
-                  && (module.resource.startsWith(nodeModules)
-                      || module.resource.startsWith(genDirNodeModules)
-                      || module.resource.startsWith(realNodeModules));
-          },
+      return module.resource
+        && (module.resource.startsWith(nodeModules)
+          || module.resource.startsWith(genDirNodeModules)
+          || module.resource.startsWith(realNodeModules));
+    },
     "chunks": [
       "main"
     ]
@@ -476,7 +482,7 @@ module.exports = {
         ]
       },
       {
-        "include":style_paths,
+        "include": style_paths,
         "test": /\.less$/,
         "use": [
           "style-loader",
