@@ -1,6 +1,7 @@
 import { app, BrowserWindow, screen } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
+import { IMessage } from './src/app/interfaces/imessage';
 
 let win: Electron.BrowserWindow;
 let serve: boolean;
@@ -49,9 +50,16 @@ function createWindow(): void {
 }
 
 try {
+
   ipcMain.on('ping', (event, arg) => {
     console.log(arg)  // prints "ping"
     event.returnValue = 'pong'
+  })
+  
+  ipcMain.on('object', (event: Electron.Event, arg: IMessage) => {
+    console.log(arg.body.content);
+    var response : IMessage = { name: 'message response', priority: 0, body: { content: 'Hello back', isHtml: false } }
+    event.returnValue = response;
   })
 
   // This method will be called when Electron has finished
